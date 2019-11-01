@@ -4,27 +4,64 @@
 import {html} from './node_modules/lit-html/lit-html.js';
 import App from './App.js';
 
-App.Start(
-    document.querySelector("#App"),
+const Components = {
+    Counter:(c, s)=>
     {
-        Count:0
+        return html`
+        <em>Count:</em><strong>${c}</strong>
+        <button @click=${()=>s("DELTA", +1)}>+</button>
+        <button @click=${()=>s("DELTA", -1)}>-</button>`;
     },
-    (inModel, inEnum, inPayload)=>
+    Person:(p, s)=>
     {
-        switch(inEnum)
+        return html`
+        <li>
+            <span>${p.Name}</span>
+            <button @click=${()=>s("DELETE", p.ID)}>x</button>
+        </li>`;
+    },
+    People:(p, s)=>
+    {
+        return html`
+        <ul>
+            ${p.map(inPerson => Components.Person(inPerson, s))}
+        </ul>
+        <button @click=${()=>s("CREATE", "Seth"+Math.random())}>new</button>`;
+    }
+};
+
+App.Start(document.querySelector("#App"),
+    {
+        Count:0,
+        People:[]
+    },
+    {
+        DELTA:(inModel, inAmount)=>
         {
-            case "DELTA":
-                inModel.Count += inPayload;
+            inModel.Count += inAmount;
+        },
+        CREATE:(inModel, inName)=>
+        {
+            inModel.People.push({Name:inName, ID:Math.random()});
+        },
+        DELETE:(inModel, inID)=>
+        {
+            var index;
+            index = inModel.People.findIndex((inPerson)=>inPerson.ID == inID);
+            if(index)
+            {
+                inModel.People.splice(index, 1);
+            }
         }
     },
     (inModel, inSignal)=>
     {
         return html`
         <div>
-            <em>Count:</em><strong>${inModel.Count}</strong>
-            <button @click=${()=>inSignal("DELTA", +1)}>+</button>
-            <button @click=${()=>inSignal("DELTA", -1)}>-</button>
+            ${Components.Counter(inModel.Count, inSignal)}
+            ${Components.People(inModel.People, inSignal)}
         </div>`;
     }
 );
+
 </script>

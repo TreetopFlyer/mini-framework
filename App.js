@@ -1,22 +1,28 @@
 import {render} from './node_modules/lit-html/lit-html.js';
-var Tower;
-Tower = {
+var App;
+App = {
     _DOM:{},
     _Model:{},
-    _Mutations:(inModel, inEnum, inPayload)=>{},
+    _Mutations:{},
     _View:(inModel, inSignal)=>{},
     Update: (inEnum, inPayload)=>
     {
-        Tower._Mutations(Tower._Model, inEnum, inPayload);
-        render(Tower._View(Tower._Model, Tower.Update), Tower._DOM);
+        var mutation;
+        mutation = App._Mutations[inEnum];
+        if(mutation)
+        {
+            console.log(inEnum, inPayload);
+            mutation(App._Model, inPayload);
+        }
+        render(App._View(App._Model, App.Update), App._DOM);
     },
     Start:(inDOM, inModel, inMutations, inView)=>
     {
-        Tower._DOM = inDOM;
-        Tower._Model = inModel;
-        Tower._Mutations = inMutations;
-        Tower._View = inView;
-        Tower.Update();
+        App._DOM = inDOM;
+        App._Model = inModel;
+        App._Mutations = inMutations;
+        App._View = inView;
+        App.Update();
     }
 };
-export default Tower;
+export default App;
