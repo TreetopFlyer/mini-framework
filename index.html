@@ -1,0 +1,30 @@
+<div id="App"></div>
+
+<script type="module">
+import {html} from './node_modules/lit-html/lit-html.js';
+import App from './App.js';
+
+App.Start(
+    document.querySelector("#App"),
+    {
+        Count:0
+    },
+    (inModel, inEnum, inPayload)=>
+    {
+        switch(inEnum)
+        {
+            case "DELTA":
+                inModel.Count += inPayload;
+        }
+    },
+    (inModel, inSignal)=>
+    {
+        return html`
+        <div>
+            <em>Count:</em><strong>${inModel.Count}</strong>
+            <button @click=${()=>inSignal("DELTA", +1)}>+</button>
+            <button @click=${()=>inSignal("DELTA", -1)}>-</button>
+        </div>`;
+    }
+);
+</script>
