@@ -4,7 +4,8 @@ App = {
     _DOM:{},
     _Model:{},
     _Mutations:{},
-    _View:(inModel, inSignal)=>{},
+    _Views:{},
+    _View:{},
     Update: (inEnum, inPayload)=>
     {
         var mutation;
@@ -14,15 +15,13 @@ App = {
             console.log(inEnum, inPayload);
             mutation(App._Model, inPayload);
         }
-        render(App._View(App._Model, App.Update), App._DOM);
+        render(App._View(App._Model, App.Update, App._Views), App._DOM);
     },
-    Start:(inDOM, inModel, inMutations, inView)=>
+    Start:(inDOM, inView)=>
     {
         App._DOM = inDOM;
-        App._Model = inModel;
-        App._Mutations = inMutations;
-        App._View = inView;
-        App.Update();
+        App._View = App._Views[inView];
+        render(App._View(App._Model, App.Update, App._Views), App._DOM);
     }
 };
 export default App;
