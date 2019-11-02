@@ -1,22 +1,15 @@
 import {render} from 'lit-html';
-var App;
-App = {
-
-    _Model:{},
-    _Mutations:{},
-    _Views:{},
-    _View:{},
-    _DOM:{},
-
+const App = {
+    User: false,
     GetMutation: (inEnum, inPayload)=>
     {
         var mutation;
-        mutation = App._Mutations[inEnum];
+        mutation = App.User.Mutations[inEnum];
         if(mutation)
         {
             return ()=>
             {
-                mutation(inPayload, App._Model);
+                mutation(inPayload, App.User.Model);
                 App.Render();
             }
         }
@@ -24,7 +17,7 @@ App = {
     GetComponent:(inEnum, inPayload, inArray)=>
     {
         var view;
-        view = App._Views[inEnum];
+        view = App.User.Views[inEnum];
         if(view)
         {
             if(inPayload == null)
@@ -40,13 +33,21 @@ App = {
     },
     Render:()=>
     {
-        render(App._View(App._Model, App.GetMutation, App.GetComponent), App._DOM);
+        render(App.User.View(App.User.Model, App.GetMutation, App.GetComponent), App.User.DOM);
     },
-    Start:(inDOM, inView)=>
+    Initialize: (inModel, inMutations, inViews, inDOM, inLayout)=>
     {
-        App._DOM = inDOM;
-        App._View = App._Views[inView];
+        App.User = {
+            Model: inModel,
+            Mutations: inMutations,
+            Views: inViews,
+            View: inViews[inLayout],
+            DOM: inDOM
+        };
         App.Render();
     }
 };
-export default App;
+
+var init = App.Initialize;
+export { html } from 'lit-html';
+export { init as App };

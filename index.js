@@ -1,19 +1,19 @@
-import {html} from 'lit-html';
-import App from './App.js';
+import {App, html} from './App.js';
 
-App._Model = {
+App(
+{
     Count:0,
     People:[]
-};
-App._Mutations = {
+},
+{
     DELTA:(inAmount, inModel) =>
         inModel.Count += inAmount,
     CREATE:(inName, inModel) =>
         inModel.People.push({Name:inName, ID:Math.random()}),
     DELETE:(inID, inModel) =>
         inModel.People = inModel.People.filter((inPerson)=>inPerson.ID != inID)
-};
-App._Views = {
+},
+{
     Main:(model, send, draw) => html`
         <div>
             ${draw("Counter", model.Count)}
@@ -34,5 +34,7 @@ App._Views = {
             ${draw("Person", null, people)}
         </ul>
         <button @click=${send("CREATE", "Seth"+Math.random())}>new</button>`
-};
-App.Start(document.querySelector("#App"), "Main");
+},
+document.querySelector("#App"),
+"Main"
+);
