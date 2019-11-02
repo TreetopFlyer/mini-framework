@@ -1,4 +1,4 @@
-import {render} from './node_modules/lit-html/lit-html.js';
+import {render} from 'lit-html';
 var App;
 App = {
 
@@ -8,7 +8,7 @@ App = {
     _View:{},
     _DOM:{},
 
-    Mutate: (inEnum, inPayload)=>
+    GetMutation: (inEnum, inPayload)=>
     {
         var mutation;
         mutation = App._Mutations[inEnum];
@@ -16,12 +16,12 @@ App = {
         {
             return ()=>
             {
-                mutation(App._Model, inPayload);
+                mutation(inPayload, App._Model);
                 App.Render();
             }
         }
     },
-    Component:(inEnum, inPayload, inArray)=>
+    GetComponent:(inEnum, inPayload, inArray)=>
     {
         var view;
         view = App._Views[inEnum];
@@ -29,18 +29,18 @@ App = {
         {
             if(inPayload == null)
             {
-                return inArray.map(item => view(item, App.Mutate, App.Component));
+                return inArray.map(item => view(item, App.GetMutation, App.GetComponent));
             }
             else
             {
-                return view(inPayload, App.Mutate, App.Component);
+                return view(inPayload, App.GetMutation, App.GetComponent);
             }
             
         }
     },
     Render:()=>
     {
-        render(App._View(App._Model, App.Mutate, App.Component), App._DOM);
+        render(App._View(App._Model, App.GetMutation, App.GetComponent), App._DOM);
     },
     Start:(inDOM, inView)=>
     {
