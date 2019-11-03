@@ -7,9 +7,9 @@ const App = {
         mutation = App.User.Mutations[inEnum];
         if(mutation)
         {
-            return ()=>
+            return (inEvent)=>
             {
-                mutation(inPayload, App.User.Model);
+                mutation(inPayload, App.User.Model, inEvent);
                 App.Render();
             }
         }

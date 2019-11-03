@@ -178,22 +178,28 @@ App(
     {
         inModel.DragFrom = inNode;
     },
-    DragTo:(inNode, inModel)=>
+    DragTo:(inNode, inModel, inEvent)=>
     {
         var index;
+        
+        inEvent.preventDefault();
+        console.log("drag to, event is prevented");
         inModel.DragTo = inNode;
-        if(inModel.DragFrom === inModel.DragTo)// drag to self
+        if(inModel.DragFrom.ID === inModel.DragTo.ID)// drag to self
         {
+            console.log("drag to self");
             return;
         }
         if(inModel.DragFrom.Depth == inModel.DragTo.Depth)// drag to sibling
         {
+            console.log("drag to sibling");
             index = Node.GetIndex(inModel.DragTo);
             Node.Disconnect(inModel.DragFrom);
             Node.Connect(inModel.DragTo.Parent, inModel.DragFrom, index);
         }
         if(inModel.DragFrom.Depth-1 == inModel.DragTo.Depth)// drag to first parent
         {
+            console.log("drag to parent");
             Node.Disconnect(inModel.DragFrom);
             Node.Connect(inModel.DragTo, inModel.DragFrom, 0);
         }
@@ -213,7 +219,7 @@ App(
     </div>`,
 
     Row:(inRow, Send, Draw) => html`
-    <div class="Row"  @drop=${Send("DragTo", inRow)} @dragover=${e=>e.preventDefault()} >
+    <div class="Row" @drop=${Send("DragTo", inRow)} @dragover=${e=>e.preventDefault()} >
         Row!
         ${Draw("Manipulator", inRow)}
         <div class="Columns">
@@ -223,7 +229,7 @@ App(
     </div>`,
 
     Column:(inColumn, Send, Draw)=>html`
-    <div class="Column" draggable="true" @dragstart=${Send("DragStart", inColumn)} @dragend=${Send("DragStop", inColumn)} @drop=${Send("DragTo", inColumn)} @dragover=${e=>e.preventDefault()}>
+    <div class="Column" draggable="true" @dragstart=${Send("DragStart", inColumn)} @dragend=${Send("DragStop", inColumn)} @drop=${Send("DragTo", inColumn)}} @dragover=${e=>e.preventDefault()}>
         Column!
         ${Draw("Manipulator", inColumn)}
         <div class="Cells">
