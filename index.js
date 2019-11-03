@@ -224,73 +224,36 @@ App(
         <button @click=${Send("CreateRow", inModel.Table)}>+Row</button>
     </div>`,
 
-    Row:(inNode, Send, Draw) => html`
-    <div class="Row" 
-        draggable="true"
-        @dragstart=${Send("DragStart", inNode)}
-        @dragend=${Send("DragStop", inNode)}
-        @drop=${Send("DragTo", inNode)}}
-        @dragover=${e=>e.preventDefault()}>
-        Row!
-        ${Draw("Manipulator", inNode)}
+    Row:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Class:"Row", Contents:html`
+        <p>Row!</p>
         <div class="Columns">
             ${Draw("Column", null, inNode.Members)}
             <button @click=${Send("CreateColumn", inNode)}>+Column</button>
         </div>
-    </div>`,
+    `}),
 
-    Column:(inNode, Send, Draw)=>html`
-    <div class="Column"
-        draggable="true"
-        @dragstart=${Send("DragStart", inNode)}
-        @dragend=${Send("DragStop", inNode)}
-        @drop=${Send("DragTo", inNode)}}
-        @dragover=${e=>e.preventDefault()}>
-        Column!
-        ${Draw("Manipulator", inNode)}
+    Column:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Class:"Column", Contents:html`
+        <p>Column!</p>
         <div class="Cells">
             ${Draw("Cell", null, inNode.Members)}
         </div>
         <button @click=${Send("CreateCell", inNode)}>+Cell</button>
-    </div>`,
+    `}),
 
-    Cell:(inNode, Send, Draw)=>html`
-    <div class="Cell"
-        draggable="true"
-        @dragstart=${Send("DragStart", inNode)}
-        @dragend=${Send("DragStop", inNode)}
-        @drop=${Send("DragTo", inNode)}}
-        @dragover=${e=>e.preventDefault()}>
-        Cell!
-        ${Draw("Manipulator", inNode)}
-    </div>`,
+    Cell:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Class:"Cell", Contents:html`
+        <p>Cell!</p>
+    `}),
 
-    Draggable:({Node, Class}, Send, Draw)=>html`
-    <div
-        class=${Class}
-        draggable="true"
-        @dragstart=${Send("DragStart", Node)}
-        @dragend=${Send("DragStop", Node)}
-        @drop=${Send("DragTo", Node)}}
-        @dragover=${e=>e.preventDefault()}>
-        <p>${Class}</p>
-        <div>
-            <button @click=${Send("Clone", Node)}>duplicate</button>
-            <button @click=${Send("Delete", Node)}>delete</button>
-        </div>
-        <div>
-            ${Draw("Section", null, Node.Members)}
-        </div>
-        <div>
-            <button @click=${Send("Create"+Class, Node)}>+${Class}</button>
-        </div>
-    </div>`,
-
-    Manipulator:(inNode, Send, Draw)=>html`
-    <div>
-        <button @click=${Send("Clone", inNode)}>duplicate</button>
-        <button @click=${Send("Delete", inNode)}>delete</button>
-    </div>
-    `
+    Draggable:({Node, Class, Contents}, Send, Draw) =>
+    {
+        return html`
+        <div style="background:#ddd;" class=${Class} draggable="true" @dragstart=${Send("DragStart", Node)} @dragend=${Send("DragStop", Node)} @drop=${Send("DragTo", Node)}} @dragover=${e=>e.preventDefault()}>
+            <div>
+                <button @click=${Send("Clone", Node)}>duplicate</button>
+                <button @click=${Send("Delete", Node)}>delete</button>
+            </div>
+            ${Contents}
+        </div>`;
+    }
 },
 document.querySelector("#App"), "Table");
