@@ -23,6 +23,7 @@ const Node = {
     {
         var obj;
         obj = Node.CreateBase(inParent);
+        obj.Type = "Table";
         Node.CreateRow(obj);
         return obj;
     },
@@ -30,6 +31,7 @@ const Node = {
     {
         var obj;
         obj = Node.CreateBase(inParent);
+        obj.Type = "Row";
         Node.CreateColumn(obj);
         return obj;
     },
@@ -37,13 +39,16 @@ const Node = {
     {
         var obj;
         obj = Node.CreateBase(inParent);
+        obj.Type = "Column";
         Node.CreateCell(obj);
+
         return obj;
     },
     CreateCell:(inParent)=>
     {
         var obj;
         obj = Node.CreateBase(inParent);
+        obj.Type = "Cell";
         return obj;
     },
     GetIndex:(inNode)=>
@@ -174,16 +179,16 @@ App(
     {
         inModel.Swap = [inNode];
     },
-    DragStart:(inNode, inModel)=>
+    DragStart:(inNode, inModel, inEvent)=>
     {
+        inEvent.stopPropagation();
         inModel.DragFrom = inNode;
     },
     DragTo:(inNode, inModel, inEvent)=>
     {
         var index;
         
-        inEvent.preventDefault();
-        console.log("drag to, event is prevented");
+        inEvent.stopPropagation();
         inModel.DragTo = inNode;
         if(inModel.DragFrom.ID === inModel.DragTo.ID)// drag to self
         {
@@ -193,8 +198,9 @@ App(
         if(inModel.DragFrom.Depth == inModel.DragTo.Depth)// drag to sibling
         {
             console.log("drag to sibling");
-            index = Node.GetIndex(inModel.DragTo);
+            
             Node.Disconnect(inModel.DragFrom);
+            index = Node.GetIndex(inModel.DragTo);
             Node.Connect(inModel.DragTo.Parent, inModel.DragFrom, index);
         }
         if(inModel.DragFrom.Depth-1 == inModel.DragTo.Depth)// drag to first parent
@@ -218,29 +224,66 @@ App(
         <button @click=${Send("CreateRow", inModel.Table)}>+Row</button>
     </div>`,
 
-    Row:(inRow, Send, Draw) => html`
-    <div class="Row" @drop=${Send("DragTo", inRow)} @dragover=${e=>e.preventDefault()} >
+    Row:(inNode, Send, Draw) => html`
+    <div class="Row" 
+        draggable="true"
+        @dragstart=${Send("DragStart", inNode)}
+        @dragend=${Send("DragStop", inNode)}
+        @drop=${Send("DragTo", inNode)}}
+        @dragover=${e=>e.preventDefault()}>
         Row!
-        ${Draw("Manipulator", inRow)}
+        ${Draw("Manipulator", inNode)}
         <div class="Columns">
-            ${Draw("Column", null, inRow.Members)}
-            <button @click=${Send("CreateColumn", inRow)}>+Column</button>
+            ${Draw("Column", null, inNode.Members)}
+            <button @click=${Send("CreateColumn", inNode)}>+Column</button>
         </div>
     </div>`,
 
-    Column:(inColumn, Send, Draw)=>html`
-    <div class="Column" draggable="true" @dragstart=${Send("DragStart", inColumn)} @dragend=${Send("DragStop", inColumn)} @drop=${Send("DragTo", inColumn)}} @dragover=${e=>e.preventDefault()}>
+    Column:(inNode, Send, Draw)=>html`
+    <div class="Column"
+        draggable="true"
+        @dragstart=${Send("DragStart", inNode)}
+        @dragend=${Send("DragStop", inNode)}
+        @drop=${Send("DragTo", inNode)}}
+        @dragover=${e=>e.preventDefault()}>
         Column!
-        ${Draw("Manipulator", inColumn)}
+        ${Draw("Manipulator", inNode)}
         <div class="Cells">
-            ${Draw("Cell", null, inColumn.Members)}
+            ${Draw("Cell", null, inNode.Members)}
         </div>
-        <button @click=${Send("CreateCell", inColumn)}>+Cell</button>
+        <button @click=${Send("CreateCell", inNode)}>+Cell</button>
     </div>`,
 
-    Cell:(inCell, Send, Draw)=>html`
-    <div class="Cell">
+    Cell:(inNode, Send, Draw)=>html`
+    <div class="Cell"
+        draggable="true"
+        @dragstart=${Send("DragStart", inNode)}
+        @dragend=${Send("DragStop", inNode)}
+        @drop=${Send("DragTo", inNode)}}
+        @dragover=${e=>e.preventDefault()}>
         Cell!
+        ${Draw("Manipulator", inNode)}
+    </div>`,
+
+    Draggable:({Node, Class}, Send, Draw)=>html`
+    <div
+        class=${Class}
+        draggable="true"
+        @dragstart=${Send("DragStart", Node)}
+        @dragend=${Send("DragStop", Node)}
+        @drop=${Send("DragTo", Node)}}
+        @dragover=${e=>e.preventDefault()}>
+        <p>${Class}</p>
+        <div>
+            <button @click=${Send("Clone", Node)}>duplicate</button>
+            <button @click=${Send("Delete", Node)}>delete</button>
+        </div>
+        <div>
+            ${Draw("Section", null, Node.Members)}
+        </div>
+        <div>
+            <button @click=${Send("Create"+Class, Node)}>+${Class}</button>
+        </div>
     </div>`,
 
     Manipulator:(inNode, Send, Draw)=>html`
