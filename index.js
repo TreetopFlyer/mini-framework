@@ -1,6 +1,5 @@
 import {App, html} from './App.js';
 
-
 const Node = {
     CreateBase:(inParent)=>
     {
@@ -10,6 +9,7 @@ const Node = {
             Members:[],
             Parent:false,
             Depth:0,
+            ListSwap:false,
             Display:{Width:100, ColorOuter:"#ddd", ColorInner:"#eee"},
             Content:{}
         };
@@ -46,12 +46,16 @@ const Node = {
         obj = Node.CreateBase(inParent);
         return obj;
     },
+    GetIndex:(inNode)=>
+    {
+        return inNode.Parent.Members.findIndex(n => n.ID === inNode.ID);
+    },
     Disconnect:(inChild)=>
     {
         var index;
         if(inChild.Parent)
         {
-            index = inChild.Parent.Members.findIndex(n => n === inChild);
+            index = Node.GetIndex(inChild);
             if(index != -1)
             {
                 inChild.Parent.Members.splice(index, 1);
@@ -59,13 +63,22 @@ const Node = {
             }
         }
     },
-    Connect:(inParent, inChild)=>
+    Connect:(inParent, inChild, inIndex)=>
     {
         if(inChild.Parent)
         {
             Node.Disconnect(inChild);
         }
-        inParent.Members.push(inChild);
+        if(inIndex != undefined)
+        {
+            console.log("inserting at", inIndex);
+            inParent.Members.splice(inIndex, 0, inChild);
+        }
+        else
+        {
+            console.log("inserting at end");
+            inParent.Members.push(inChild);
+        }
         inChild.Parent = inParent;
         inChild.Depth = inParent.Depth+1;
     },
@@ -84,6 +97,11 @@ const Node = {
                 resetParents(inChild);
             });
         };
+        const resetIDs = (inNode) =>
+        {
+            inNode.ID = Math.random();
+            inNode.Members.forEach(resetIDs);
+        };
 
         var parent, clone;
         var index;
@@ -95,10 +113,11 @@ const Node = {
         inNode.Parent = parent; //
 
         resetParents(clone);   // restore the references within the clone
+        resetIDs(clone);       //
         clone.Parent = parent; //
 
-        index = inNode.Parent.Members.findIndex(n => n === inNode);
-        inNode.Parent.Members.splice(index, 0, clone);//put the clone back next to the original node
+        index = Node.GetIndex(inNode);
+        inNode.Parent.Members.splice(index+1, 0, clone);//put the clone back next to the original node
 
         return clone;
     },
@@ -112,21 +131,22 @@ const Node = {
             return;
         }
 
-        i1 = inNode1.Parent.Members.findIndex(n => n === inNode1);
-        i2 = inNode2.Parent.Members.findIndex(n => n === inNode2);
-
+        i1 = Node.GetIndex(inNode1);
+        i2 = Node.GetIndex(inNode2);
+        
         inNode1.Parent.Members[i1] = inNode2;
         inNode2.Parent.Members[i2] = inNode1;
     },
     Move:(inNode1, inNode2)=>
     {
         Node.Disconnect(inNode1);
-        
-    }
+    },
 };
 
 App(
 {
+    DragFrom:false,
+    DragTo:false,
     Table:Node.CreateTable()
 },
 {
@@ -149,6 +169,39 @@ App(
     Delete:(inNode) =>
     {
         Node.Disconnect(inNode);
+    },
+    SwapStart:(inNode, inModel) =>
+    {
+        inModel.Swap = [inNode];
+    },
+    DragStart:(inNode, inModel)=>
+    {
+        inModel.DragFrom = inNode;
+    },
+    DragTo:(inNode, inModel)=>
+    {
+        var index;
+        inModel.DragTo = inNode;
+        if(inModel.DragFrom === inModel.DragTo)// drag to self
+        {
+            return;
+        }
+        if(inModel.DragFrom.Depth == inModel.DragTo.Depth)// drag to sibling
+        {
+            index = Node.GetIndex(inModel.DragTo);
+            Node.Disconnect(inModel.DragFrom);
+            Node.Connect(inModel.DragTo.Parent, inModel.DragFrom, index);
+        }
+        if(inModel.DragFrom.Depth-1 == inModel.DragTo.Depth)// drag to first parent
+        {
+            Node.Disconnect(inModel.DragFrom);
+            Node.Connect(inModel.DragTo, inModel.DragFrom, 0);
+        }
+    },
+    DragStop:(inNode, inModel)=>
+    {
+        inModel.DragFrom = false;
+        inModel.DragTo = false;
     }
 },
 {
@@ -160,10 +213,9 @@ App(
     </div>`,
 
     Row:(inRow, Send, Draw) => html`
-    <div class="Row">
+    <div class="Row"  @drop=${Send("DragTo", inRow)} @dragover=${e=>e.preventDefault()} >
         Row!
-        <button @click=${Send("Clone", inRow)}>duplicate</button>
-        <button @click=${Send("Delete", inRow)}>delete</button>
+        ${Draw("Manipulator", inRow)}
         <div class="Columns">
             ${Draw("Column", null, inRow.Members)}
             <button @click=${Send("CreateColumn", inRow)}>+Column</button>
@@ -171,17 +223,25 @@ App(
     </div>`,
 
     Column:(inColumn, Send, Draw)=>html`
-    <div class="Column">
+    <div class="Column" draggable="true" @dragstart=${Send("DragStart", inColumn)} @dragend=${Send("DragStop", inColumn)} @drop=${Send("DragTo", inColumn)} @dragover=${e=>e.preventDefault()}>
         Column!
-        <button @click=${Send("Clone", inColumn)}>duplicate</button>
-        <button @click=${Send("Delete", inColumn)}>delete</button>
-        ${Draw("Cell", null, inColumn.Members)}
+        ${Draw("Manipulator", inColumn)}
+        <div class="Cells">
+            ${Draw("Cell", null, inColumn.Members)}
+        </div>
         <button @click=${Send("CreateCell", inColumn)}>+Cell</button>
     </div>`,
 
     Cell:(inCell, Send, Draw)=>html`
     <div class="Cell">
         Cell!
-    </div>`
+    </div>`,
+
+    Manipulator:(inNode, Send, Draw)=>html`
+    <div>
+        <button @click=${Send("Clone", inNode)}>duplicate</button>
+        <button @click=${Send("Delete", inNode)}>delete</button>
+    </div>
+    `
 },
 document.querySelector("#App"), "Table");
