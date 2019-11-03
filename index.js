@@ -1,7 +1,7 @@
 import {App, html} from './App.js';
 
 const Node = {
-    CreateBase:(inParent)=>
+    Grow:(inParent)=>
     {
         var obj;
         obj = {
@@ -17,38 +17,28 @@ const Node = {
         {
             Node.Connect(inParent, obj);
         }
-        return obj;
-    },
-    CreateTable:(inParent)=>
-    {
-        var obj;
-        obj = Node.CreateBase(inParent);
-        obj.Type = "Table";
-        Node.CreateRow(obj);
-        return obj;
-    },
-    CreateRow:(inParent)=>
-    {
-        var obj;
-        obj = Node.CreateBase(inParent);
-        obj.Type = "Row";
-        Node.CreateColumn(obj);
-        return obj;
-    },
-    CreateColumn:(inParent)=>
-    {
-        var obj;
-        obj = Node.CreateBase(inParent);
-        obj.Type = "Column";
-        Node.CreateCell(obj);
-
-        return obj;
-    },
-    CreateCell:(inParent)=>
-    {
-        var obj;
-        obj = Node.CreateBase(inParent);
-        obj.Type = "Cell";
+        switch(obj.Depth)
+        {
+            case 0:
+                obj.Type = "Table";
+                // add table properties
+                Node.Grow(obj);// add row
+                break;
+            case 1:
+                obj.Type = "Row";
+                // add row properties
+                Node.Grow(obj);// add column
+                break;
+            case 2:
+                obj.Type = "Column";
+                // add column properties
+                Node.Grow(obj);// add cell
+                break;
+            case 3:
+                obj.Type = "Cell";
+                // add cell properties
+                break;
+        }
         return obj;
     },
     GetIndex:(inNode)=>
@@ -125,47 +115,19 @@ const Node = {
         inNode.Parent.Members.splice(index+1, 0, clone);//put the clone back next to the original node
 
         return clone;
-    },
-    Swap:(inNode1, inNode2)=>
-    {
-        var i1, i2;
-
-        if(inNode1.Depth != inNode2.Depth)
-        {
-            console.error("mismatched depths");
-            return;
-        }
-
-        i1 = Node.GetIndex(inNode1);
-        i2 = Node.GetIndex(inNode2);
-        
-        inNode1.Parent.Members[i1] = inNode2;
-        inNode2.Parent.Members[i2] = inNode1;
-    },
-    Move:(inNode1, inNode2)=>
-    {
-        Node.Disconnect(inNode1);
-    },
+    }
 };
 
 App(
 {
     DragFrom:false,
     DragTo:false,
-    Table:Node.CreateTable()
+    Table:Node.Grow()
 },
 {
-    CreateRow:(inTable) =>
+    Grow:(inNode) =>
     {
-        Node.CreateRow(inTable);
-    },
-    CreateColumn:(inRow) =>
-    {
-        Node.CreateColumn(inRow);
-    },
-    CreateCell:(inColumn) =>
-    {
-        Node.CreateCell(inColumn);
+        Node.Grow(inNode);
     },
     Clone:(inNode) =>
     {
@@ -174,10 +136,6 @@ App(
     Delete:(inNode) =>
     {
         Node.Disconnect(inNode);
-    },
-    SwapStart:(inNode, inModel) =>
-    {
-        inModel.Swap = [inNode];
     },
     DragStart:(inNode, inModel, inEvent)=>
     {
@@ -221,14 +179,14 @@ App(
     <div class="Table">
         Table!
         ${Draw("Row", null, inModel.Table.Members)}
-        <button @click=${Send("CreateRow", inModel.Table)}>+Row</button>
+        <button @click=${Send("Grow", inModel.Table)}>+Row</button>
     </div>`,
 
     Row:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Class:"Row", Contents:html`
         <p>Row!</p>
         <div class="Columns">
             ${Draw("Column", null, inNode.Members)}
-            <button @click=${Send("CreateColumn", inNode)}>+Column</button>
+            <button @click=${Send("Grow", inNode)}>+Column</button>
         </div>
     `}),
 
@@ -237,7 +195,7 @@ App(
         <div class="Cells">
             ${Draw("Cell", null, inNode.Members)}
         </div>
-        <button @click=${Send("CreateCell", inNode)}>+Cell</button>
+        <button @click=${Send("Grow", inNode)}>+Cell</button>
     `}),
 
     Cell:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Class:"Cell", Contents:html`
