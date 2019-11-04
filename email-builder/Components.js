@@ -6,7 +6,13 @@ export default {
 
     Main:(inModel, Send, Draw) =>
     {
-        return Draw("Table", inModel.Table)
+        return html`
+        <div class="App">
+            ${Draw("EditorColor", inModel.Color)}
+            <div class="Layout">
+                ${Draw("Table", inModel.Table)}
+            </div>
+        </div>`;
     },
 
     Table:(inTable, Send, Draw) => Draw("Draggable", {Node:inTable, Contents:html`
@@ -65,5 +71,15 @@ export default {
         <span class="Grow">
             <button @click=${Send("Create", inNode)}>+${MapDepth[inNode.Depth+1]}</button>
         </span>`;
+    },
+
+    EditorColor:(inColor, Send, Draw) =>
+    {
+        return html`
+        <div class="Editor">
+            <input type="color" .value=${inColor} @change=${Send("Color", null)} />
+            <input type="text" .value=${inColor} @change=${Send("Color", null)} />
+        </div>
+        `;
     }
 };

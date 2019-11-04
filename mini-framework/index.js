@@ -1,7 +1,7 @@
 import {render} from 'lit-html';
 const App = {
     User: false,
-    GetMutation: (inEnum, inPayload)=>
+    GetMutation: (inEnum, inPayload, inProcessor)=>
     {
         var mutation;
         mutation = App.User.Mutations[inEnum];

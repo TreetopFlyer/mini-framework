@@ -2,6 +2,11 @@
 import {Tree} from './Utilities.js';
 
 export default {
+    Color:(inValue, inModel, inEvent) =>
+    {
+        console.log(inEvent.target.value);
+        inModel.Color = inEvent.target.value;
+    },
     Create:(inBranch) =>
     {
         var newBranch;
