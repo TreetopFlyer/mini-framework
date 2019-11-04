@@ -4,38 +4,16 @@ export const Tree = {
         var obj;
         obj = {
             ID:Math.random()+"-"+Math.random(),
-            Members:[],
-            Parent:false,
             Depth:0,
-            ListSwap:false,
-            Display:{Width:100, ColorOuter:"#ddd", ColorInner:"#eee"},
+            Parent:false,
+            Members:[],
+            Type:"",
+            Display:{},
             Content:{}
         };
         if(inParent)
         {
             Tree.Connect(inParent, obj);
-        }
-        switch(obj.Depth)
-        {
-            case 0:
-                obj.Type = "Table";
-                // add table properties
-                Tree.Grow(obj);// add row
-                break;
-            case 1:
-                obj.Type = "Row";
-                // add row properties
-                Tree.Grow(obj);// add column
-                break;
-            case 2:
-                obj.Type = "Column";
-                // add column properties
-                Tree.Grow(obj);// add cell
-                break;
-            case 3:
-                obj.Type = "Cell";
-                // add cell properties
-                break;
         }
         return obj;
     },

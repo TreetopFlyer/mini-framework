@@ -2,9 +2,25 @@
 import {Tree} from './Utilities.js';
 
 export default {
-    Grow:(inBranch) =>
+    Create:(inBranch) =>
     {
-        Tree.Grow(inBranch);
+        var newBranch;
+        newBranch = Tree.Grow(inBranch);
+        switch(newBranch.Depth)
+        {
+            case 0:
+                // add table properties
+                break;
+            case 1:
+                // add row properties
+                break;
+            case 2:
+                // add column properties
+                break;
+            case 3:
+                // add cell properties
+                break;
+        }
     },
     Clone:(inBranch) =>
     {
@@ -19,7 +35,7 @@ export default {
         inEvent.stopPropagation();
         inModel.DragFrom = inBranch;
     },
-    DragStop:(inBranch, inModel)=>
+    DragStop:(inBranch, inModel, inEvent)=>
     {
         inEvent.stopPropagation();
         inModel.DragFrom = false;
@@ -30,6 +46,10 @@ export default {
         
         inEvent.stopPropagation();
         inModel.DragTo = inBranch;
+        if(inModel.DragFrom.ID === inModel.DragTo.ID)// drag to self
+        {
+            return;
+        }
         if(inModel.DragFrom.Depth == inModel.DragTo.Depth)// drag to sibling
         {
             Tree.Disconnect(inModel.DragFrom);

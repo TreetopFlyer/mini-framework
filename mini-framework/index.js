@@ -9,7 +9,7 @@ const App = {
         {
             return (inEvent)=>
             {
-                console.log("MUTATION:", inEnum);
+                console.log("MUTATION:", inEnum, inPayload);
                 mutation(inPayload, App.User.Model, inEvent);
                 App.Render();
             }
