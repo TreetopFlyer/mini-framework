@@ -67,5 +67,13 @@ export default {
             Tree.Connect(inModel.DragTo, inModel.DragFrom);
         }
         inModel.DragTo = false;
+    },
+    ModeEditOn:(inBranch, inModel, inEvent)=>
+    {
+        inBranch.ModeEdit = true;
+    },
+    ModeEditOff:(inBranch, inModel, inEvent)=>
+    {
+        inBranch.ModeEdit = false;
     }
 };

@@ -1,6 +1,7 @@
 <style>
 .Table, .Row, .Column, .Cell
 {
+    position:relative;
     border:1px solid #000;
     padding:10px;
     box-sizing: border-box;
@@ -14,6 +15,26 @@
 {
     display:inline-block;
     width:30%;
+}
+.Editor
+{
+    display:inline-block;
+    position:absolute;
+}
+.Row > .Editor.Individual
+{
+    top:-10px;
+    left:10px;
+}
+.Column > .Editor.Individual
+{
+    top:-10px;
+    right:10px;
+}
+.Cell > .Editor.Individual
+{
+    bottom:0;
+    right:0;
 }
 </style>
 <div id="App"></div>

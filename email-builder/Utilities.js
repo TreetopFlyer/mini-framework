@@ -6,6 +6,8 @@ export const Tree = {
             ID:Math.random()+"-"+Math.random(),
             Depth:0,
             Parent:false,
+            ModeEdit:false,
+            ModeTarget:false,
             Members:[],
             Type:"",
             Display:{},

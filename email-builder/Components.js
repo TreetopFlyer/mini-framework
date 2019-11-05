@@ -46,37 +46,48 @@ export default {
     {
         return html`
         <div
+        ?data-target=${Node.ModeTarget}
         class=${MapDepth[Node.Depth]}
         draggable="true"
+        
         @dragstart=${Send("DragStart", Node)}
         @dragend=${Send("DragStop", Node)}
         @drop=${Send("DragDrop", Node)}}
-        @dragover=${e=>e.preventDefault()}>
+        @dragover=${e=>e.preventDefault()}
+        
+        @mouseenter=${Send("ModeEditOn", Node)}
+        @mouseleave=${Send("ModeEditOff", Node)}>
             ${Contents}
         </div>`;
     },
 
     EditorNode:(inNode, Send, Draw) =>
     {
-        return html`
-        <span class="Edit">
-            <button @click=${Send("Clone", inNode)}>duplicate</button>
-            <button @click=${Send("Delete", inNode)}>delete</button>
-        </span>`;
+        if(inNode.ModeEdit)
+        {
+            return html`
+            <span class="Editor Individual">
+                <button @click=${Send("Clone", inNode)}>duplicate</button>
+                <button @click=${Send("Delete", inNode)}>delete</button>
+            </span>`;
+        }
     },
 
     EditorMembers:(inNode, Send, Draw) =>
     {
-        return html`
-        <span class="Grow">
-            <button @click=${Send("Create", inNode)}>+${MapDepth[inNode.Depth+1]}</button>
-        </span>`;
+        if(inNode.ModeEdit)
+        {
+            return html`
+            <span class="Editor Members">
+                <button @click=${Send("Create", inNode)}>+${MapDepth[inNode.Depth+1]}</button>
+            </span>`;
+        }
     },
 
     EditorColor:(inColor, Send, Draw) =>
     {
         return html`
-        <div class="Editor">
+        <div class="ColorPicker">
             <input type="color" .value=${inColor} @change=${Send("Color", null)} />
             <input type="text" .value=${inColor} @change=${Send("Color", null)} />
         </div>
