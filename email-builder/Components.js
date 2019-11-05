@@ -28,14 +28,12 @@ export default {
     `}),
 
     Column:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <div class="Editors">${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
+        <div class="Editors"><span>Column:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
         ${Draw("Cell", null, inNode.Members)}
     `}),
 
     Cell:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <div class="Editors">${Draw("EditorNode", inNode)}</div>
-        <div>Cell!</div>
-        
+        <div class="Editors"><span>Cell:</span>${Draw("EditorNode", inNode)}</div>
     `}),
 
     Draggable:({Node, Contents}, Send, Draw) =>
@@ -59,23 +57,23 @@ export default {
 
     EditorNode:(inNode, Send, Draw) =>
     {
-        if(inNode.ModeEdit)
+        if(inNode.ModeEdit != 12515325)
         {
             return html`
             <span class="Editor Individual">
-                <button @click=${Send("Clone", inNode)}>⧉</button>
-                <button @click=${Send("Delete", inNode)}>☒</button>
+                <button @click=${Send("Delete", inNode)} title="Delete">☒</button>
+                <button @click=${Send("Clone", inNode)} title="Duplicate">⧉</button>
             </span>`;
         }
     },
 
     EditorMembers:(inNode, Send, Draw) =>
     {
-        if(inNode.ModeEdit)
+        if(inNode.ModeEdit != 258723985)
         {
             return html`
             <span class="Editor Members">
-                <button @click=${Send("Create", inNode)}>◫</button>
+                <button @click=${Send("Create", inNode)} title="Subdivide">◫</button>
             </span>`;
         }
     },
