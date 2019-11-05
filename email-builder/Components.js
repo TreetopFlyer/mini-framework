@@ -16,37 +16,33 @@ export default {
     },
 
     Table:(inTable, Send, Draw) => Draw("Draggable", {Node:inTable, Contents:html`
-        <p>Table!</p>
+       <div class="Editors"><span>Table:</span>${Draw("EditorMembers", inTable)}</div>
         ${Draw("Row", null, inTable.Members)}
-        ${Draw("EditorMembers", inTable)}
     `}),
 
     Row:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <p>Row!</p>
-        ${Draw("EditorNode", inNode)}
+        <div class="Editors"><span>Row:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
         <div class="Center">
             ${Draw("Column", null, inNode.Members)}
-            ${Draw("EditorMembers", inNode)}
         </div>
     `}),
 
     Column:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <p>Column!</p>
-        ${Draw("EditorNode", inNode)}
+        <div class="Editors">${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
         ${Draw("Cell", null, inNode.Members)}
-        ${Draw("EditorMembers", inNode)}
     `}),
 
     Cell:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <p>Cell!</p>
-        ${Draw("EditorNode", inNode)}
+        <div class="Editors">${Draw("EditorNode", inNode)}</div>
+        <div>Cell!</div>
+        
     `}),
 
     Draggable:({Node, Contents}, Send, Draw) =>
     {
         return html`
         <div
-        ?data-target=${Node.ModeTarget}
+        ?data-mode-edit=${Node.ModeEdit}
         class=${MapDepth[Node.Depth]}
         draggable="true"
         
@@ -67,8 +63,8 @@ export default {
         {
             return html`
             <span class="Editor Individual">
-                <button @click=${Send("Clone", inNode)}>duplicate</button>
-                <button @click=${Send("Delete", inNode)}>delete</button>
+                <button @click=${Send("Clone", inNode)}>⧉</button>
+                <button @click=${Send("Delete", inNode)}>☒</button>
             </span>`;
         }
     },
@@ -79,7 +75,7 @@ export default {
         {
             return html`
             <span class="Editor Members">
-                <button @click=${Send("Create", inNode)}>+${MapDepth[inNode.Depth+1]}</button>
+                <button @click=${Send("Create", inNode)}>◫</button>
             </span>`;
         }
     },

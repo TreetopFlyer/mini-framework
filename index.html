@@ -2,10 +2,28 @@
 .Table, .Row, .Column, .Cell
 {
     position:relative;
-    border:1px solid #000;
-    padding:10px;
-    box-sizing: border-box;
 }
+.Table
+{
+    background:#eee;
+    min-height:100px;
+}
+
+*[draggable]
+{
+    box-sizing: border-box;
+    transition:all 0.4s;
+}
+*[data-mode-edit]
+{
+    box-shadow:0px 3px 10px #00000055;
+}
+*[data-mode-edit] > *[draggable], *[data-mode-edit] > div > *[draggable]
+{
+    outline:1px dotted #000;
+    padding:10px;
+}
+
 .Row > .Center
 {
     width:800px;
@@ -16,25 +34,33 @@
     display:inline-block;
     width:30%;
 }
+.Editors
+{
+    display:inline-block;
+    position:relative;
+    height:0;
+    overflow:hidden;
+    transition:height 0.4s;
+}
+*[data-mode-edit] > .Editors
+{
+    height:30px;
+}
 .Editor
 {
     display:inline-block;
-    position:absolute;
 }
-.Row > .Editor.Individual
+.Editor button
 {
-    top:-10px;
-    left:10px;
-}
-.Column > .Editor.Individual
-{
-    top:-10px;
-    right:10px;
-}
-.Cell > .Editor.Individual
-{
-    bottom:0;
-    right:0;
+    display: inline-block;
+    width: 25px;
+    height: 23px;
+    background: #666;
+    border: none;
+    border-radius:30px;
+    color: #aaa;
+    text-align: center;
+    line-height: 0;
 }
 </style>
 <div id="App"></div>
