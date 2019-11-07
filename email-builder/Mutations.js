@@ -1,7 +1,29 @@
 
 import {Tree} from './Utilities.js';
 
-
+const BranchGrowth = (inParent) =>
+{
+    var newBranch;
+    newBranch = Tree.Grow(inParent);
+    switch(newBranch.Depth)
+    {
+        case 0:
+            // add table properties
+            BranchGrowth(newBranch);
+            break;
+        case 1:
+            // add row properties
+            BranchGrowth(newBranch);
+            break;
+        case 2:
+            // add column properties
+            BranchGrowth(newBranch);
+            break;
+        case 3:
+            // add cell properties
+            break;
+    }
+}
 
 export default {
     Color:(inValue, inModel, inEvent) =>
@@ -11,23 +33,7 @@ export default {
     },
     Create:(inBranch) =>
     {
-        var newBranch;
-        newBranch = Tree.Grow(inBranch);
-        switch(newBranch.Depth)
-        {
-            case 0:
-                // add table properties
-                break;
-            case 1:
-                // add row properties
-                break;
-            case 2:
-                // add column properties
-                break;
-            case 3:
-                // add cell properties
-                break;
-        }
+        BranchGrowth(inBranch);
     },
     Clone:(inBranch) =>
     {
@@ -36,6 +42,21 @@ export default {
     Delete:(inBranch) =>
     {
         Tree.Disconnect(inBranch);
+    },
+    Select:(inBranch, inModel, inEvent)=>
+    {
+        var branch;
+
+        inEvent.stopPropagation();
+        inModel.Selection.forEach(s => s.ModeSelected = false);
+        inModel.Selection = [];
+        branch = inBranch;
+        while(branch)
+        {
+            branch.ModeSelected = true;
+            inModel.Selection.push(branch);
+            branch = branch.Parent;
+        }
     },
     DragStart:(inBranch, inModel, inEvent)=>
     {
@@ -69,13 +90,5 @@ export default {
             Tree.Connect(inModel.DragTo, inModel.DragFrom);
         }
         inModel.DragTo = false;
-    },
-    ModeEditOn:(inBranch, inModel, inEvent)=>
-    {
-        inBranch.ModeEdit = true;
-    },
-    ModeEditOff:(inBranch, inModel, inEvent)=>
-    {
-        inBranch.ModeEdit = false;
     }
 };

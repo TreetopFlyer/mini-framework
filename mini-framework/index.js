@@ -48,5 +48,4 @@ const App = {
         App.Render();
     }
 };
-
 export default App.Initialize;

@@ -1,13 +1,14 @@
 import {html} from 'lit-html';
-
 const MapDepth = ["Table", "Row", "Column", "Cell"];
-
 export default {
 
     Main:(inModel, Send, Draw) =>
     {
         return html`
         <div class="App">
+            <div>
+                ${inModel.Selection.map( s=>html`<span>Item! </span>`)}
+            </div>
             ${Draw("EditorColor", inModel.Color)}
             <div class="Layout">
                 ${Draw("Table", inModel.Table)}
@@ -16,23 +17,24 @@ export default {
     },
 
     Table:(inTable, Send, Draw) => Draw("Draggable", {Node:inTable, Contents:html`
-       <div class="Editors"><span>Table:</span>${Draw("EditorMembers", inTable)}</div>
         ${Draw("Row", null, inTable.Members)}
+        <div class="Editors"><span>Table:</span>${Draw("EditorMembers", inTable)}</div>
     `}),
 
     Row:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <div class="Editors"><span>Row:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
         <div class="Center">
             ${Draw("Column", null, inNode.Members)}
         </div>
+        <div class="Editors"><span>Row:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
     `}),
 
     Column:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <div class="Editors"><span>Column:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
         ${Draw("Cell", null, inNode.Members)}
+        <div class="Editors"><span>Column:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
     `}),
 
     Cell:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
+        <div>[cell]</div>
         <div class="Editors"><span>Cell:</span>${Draw("EditorNode", inNode)}</div>
     `}),
 
@@ -41,6 +43,7 @@ export default {
         return html`
         <div
         ?data-mode-edit=${Node.ModeEdit}
+        ?data-mode-selected=${Node.ModeSelected}
         class=${MapDepth[Node.Depth]}
         draggable="true"
         
@@ -49,8 +52,7 @@ export default {
         @drop=${Send("DragDrop", Node)}}
         @dragover=${e=>e.preventDefault()}
         
-        @mouseenter=${Send("ModeEditOn", Node)}
-        @mouseleave=${Send("ModeEditOff", Node)}>
+        @click=${Send("Select", Node)}>
             ${Contents}
         </div>`;
     },
@@ -73,7 +75,7 @@ export default {
         {
             return html`
             <span class="Editor Members">
-                <button @click=${Send("Create", inNode)} title="Subdivide">◫</button>
+                <button @click=${Send("Create", inNode)} title="Grow">⊞</button>
             </span>`;
         }
     },
