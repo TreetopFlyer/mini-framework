@@ -1,46 +1,18 @@
 
-import {Tree} from './Utilities.js';
-
-const BranchGrowth = (inParent) =>
-{
-    var newBranch;
-    newBranch = Tree.Grow(inParent);
-    switch(newBranch.Depth)
-    {
-        case 0:
-            // add table properties
-            BranchGrowth(newBranch);
-            break;
-        case 1:
-            // add row properties
-            BranchGrowth(newBranch);
-            break;
-        case 2:
-            // add column properties
-            BranchGrowth(newBranch);
-            break;
-        case 3:
-            // add cell properties
-            break;
-    }
-}
+import {Tree, BranchGrowth} from './Utilities.js';
 
 export default {
-    Color:(inValue, inModel, inEvent) =>
-    {
-        console.log(inEvent.target.value);
-        inModel.Color = inEvent.target.value;
-    },
     Create:(inBranch) =>
     {
         BranchGrowth(inBranch);
     },
     Clone:(inBranch) =>
     {
-        Tree.Clone(inBranch)
+        Tree.Clone(inBranch);
     },
-    Delete:(inBranch) =>
+    Delete:(inBranch, inModel) =>
     {
+        
         Tree.Disconnect(inBranch);
     },
     Select:(inBranch, inModel, inEvent)=>
@@ -57,6 +29,7 @@ export default {
             inModel.Selection.push(branch);
             branch = branch.Parent;
         }
+        inModel.Selection.reverse();
     },
     DragStart:(inBranch, inModel, inEvent)=>
     {
@@ -90,5 +63,17 @@ export default {
             Tree.Connect(inModel.DragTo, inModel.DragFrom);
         }
         inModel.DragTo = false;
+    },
+    DisplayWidth:(inSettings, inModel, inEvent)=>
+    {
+        inSettings.Width = inEvent.target.valueAsNumber;
+    },
+    DisplayColorOuter:(inSettings, inModel, inEvent)=>
+    {
+        inSettings.ColorOuter = inEvent.target.value;
+    },
+    DisplayColorInner:(inSettings, inModel, inEvent)=>
+    {
+        inSettings.ColorInner = inEvent.target.value;
     }
 };

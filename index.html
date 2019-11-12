@@ -19,11 +19,11 @@
 *[data-mode-selected]
 {
     outline:2px dotted #ff0;
+    box-shadow:0px 0px 5px #000;
 }
 
-.Row > .Center
+.Row .Center
 {
-    width:800px;
     margin:0 auto;
 }
 .Column
@@ -69,6 +69,21 @@
 {
     background:#ff0;
     color:#666;
+}
+.Field
+{
+    overflow:hidden;
+}
+.Field .Label
+{
+    width:30%;
+    float:left;
+    text-align: right;
+}
+.Field .Input
+{
+    width:65%;
+    float:right;
 }
 </style>
 <div id="App"></div>

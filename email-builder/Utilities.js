@@ -1,3 +1,52 @@
+export const BranchGrowth = (inParent) =>
+{
+    var newBranch;
+    newBranch = Tree.Grow(inParent);
+    switch(newBranch.Depth)
+    {
+        case 0:
+            // add table properties
+            newBranch.Display = {
+                Width:600
+            };
+            BranchGrowth(newBranch);
+            break;
+        case 1:
+            // add row properties
+            newBranch.Display = {
+                Width:100,
+                ColorOuter:false,
+                ColorInner:false
+            };
+            BranchGrowth(newBranch);
+            break;
+        case 2:
+            // add column properties
+            newBranch.Display = {
+                Width:100,
+                ColorOuter:false,
+                ColorInner:false
+            };
+            BranchGrowth(newBranch);
+            break;
+        case 3:
+            // add cell properties
+            newBranch.Display = {
+                ColorOuter:false,
+                ColorInner:false,
+                Padding:0,
+            },
+            newBranch.Content = {
+                Mode:"Copy", /* Copy | CTA | Image */
+                URLAction:false,
+                URLImage:false,
+                HTML:false
+            }
+            break;
+    }
+    return newBranch;
+};
+
 export const Tree = {
     Grow:(inParent)=>
     {
@@ -69,10 +118,11 @@ export const Tree = {
                 resetParents(inChild);
             });
         };
-        const resetIDs = (inBranch) =>
+        const resetFields = (inBranch) =>
         {
             inBranch.ID = Math.random();
-            inBranch.Members.forEach(resetIDs);
+            inBranch.ModeSelected = false;
+            inBranch.Members.forEach(resetFields);
         };
 
         var parent, clone;
@@ -85,7 +135,7 @@ export const Tree = {
         inBranch.Parent = parent; //
 
         resetParents(clone);   // restore the references within the clone
-        resetIDs(clone);       //
+        resetFields(clone);       //
         clone.Parent = parent; //
 
         index = Tree.GetIndex(inBranch);

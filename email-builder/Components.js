@@ -7,9 +7,8 @@ export default {
         return html`
         <div class="App">
             <div>
-                ${inModel.Selection.map( s=>html`<span>Item! </span>`)}
+                ${Draw("ParametersTable", null, inModel.Selection)}
             </div>
-            ${Draw("EditorColor", inModel.Color)}
             <div class="Layout">
                 ${Draw("Table", inModel.Table)}
             </div>
@@ -22,10 +21,12 @@ export default {
     `}),
 
     Row:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <div class="Center">
-            ${Draw("Column", null, inNode.Members)}
+        <div style="background:${inNode.Display.ColorOuter};">
+            <div class="Center" style="background:${inNode.Display.ColorInner}; width:${inNode.Parent.Display.Width * (inNode.Display.Width/100)}px;">
+                ${Draw("Column", null, inNode.Members)}
+            </div>
+            <div class="Editors"><span>Row:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
         </div>
-        <div class="Editors"><span>Row:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
     `}),
 
     Column:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
@@ -80,12 +81,41 @@ export default {
         }
     },
 
-    EditorColor:(inColor, Send, Draw) =>
+    FieldColor:(inColor, Send, Draw) =>
     {
         return html`
-        <div class="ColorPicker">
-            <input type="color" .value=${inColor} @change=${Send("Color", null)} />
-            <input type="text" .value=${inColor} @change=${Send("Color", null)} />
+
+        `;
+    },
+
+    ParametersTable:(inNode, Send, Draw)=>
+    {
+        return html`
+        <div class="Field Width">
+            <div class="Label">
+                Width:
+            </div>
+            <div class="Input">
+                <input type="number" .value=${inNode.Display.Width} @change=${Send("DisplayWidth", inNode.Display)}/>
+            </div>
+        </div>
+        <div class="Field Color Outer">
+            <div class="Label">
+                Outer Color:
+            </div>
+            <div class="Input">
+                <input type="color" .value=${inNode.Display.ColorOuter} @change=${Send("DisplayColorOuter", inNode.Display)} />
+                <input type="text"  .value=${inNode.Display.ColorOuter} @change=${Send("DisplayColorOuter", inNode.Display)} />
+            </div>
+        </div>
+        <div class="Field Color Outer">
+            <div class="Label">
+                Inner Color:
+            </div>
+            <div class="Input">
+                <input type="color" .value=${inNode.Display.ColorInner} @change=${Send("DisplayColorInner", inNode.Display)} />
+                <input type="text"  .value=${inNode.Display.ColorInner} @change=${Send("DisplayColorInner", inNode.Display)} />
+            </div>
         </div>
         `;
     }
