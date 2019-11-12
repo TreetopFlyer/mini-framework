@@ -1,4 +1,5 @@
 import {html} from 'lit-html';
+import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
 const MapDepth = ["Table", "Row", "Column", "Cell"];
 export default {
 
@@ -35,9 +36,22 @@ export default {
     `}),
 
     Cell:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <div>[cell]</div>
+        ${Draw("Contents", inNode)}
         <div class="Editors"><span>Cell:</span>${Draw("EditorNode", inNode)}</div>
     `}),
+
+    Contents:(inNode, Send, Draw)=>
+    {
+        switch(inNode.Content.Mode)
+        {
+            case "CTA" :
+                return html`<a href=${inNode.Content.URLAction}>${unsafeHTML(inNode.Content.Message)}</a>`;
+            case "Image" :
+                return html`<a href=${inNode.Content.URLAction}><img src=${inNode.Content.URLImage} alt=${inNode.Content.Message}/></a>`;
+            case "Copy" :
+                return html`<div>${unsafeHTML(inNode.Content.Message)}</div>`;
+        }
+    },
 
     Draggable:({Node, Contents}, Send, Draw) =>
     {
@@ -91,30 +105,69 @@ export default {
     ParametersTable:(inNode, Send, Draw)=>
     {
         return html`
-        <div class="Field Width">
-            <div class="Label">
-                Width:
+        <div class="Form">
+            <div class="Field Width">
+                <div class="Label">
+                    Width:
+                </div>
+                <div class="Input">
+                    <input type="number" .value=${inNode.Display.Width} @change=${Send("DisplayWidth", inNode.Display)}/>
+                </div>
             </div>
-            <div class="Input">
-                <input type="number" .value=${inNode.Display.Width} @change=${Send("DisplayWidth", inNode.Display)}/>
+            <div class="Field Color Outer">
+                <div class="Label">
+                    Outer Color:
+                </div>
+                <div class="Input">
+                    <input type="color" .value=${inNode.Display.ColorOuter} @change=${Send("DisplayColorOuter", inNode.Display)} />
+                    <input type="text"  .value=${inNode.Display.ColorOuter} @change=${Send("DisplayColorOuter", inNode.Display)} />
+                </div>
             </div>
-        </div>
-        <div class="Field Color Outer">
-            <div class="Label">
-                Outer Color:
+            <div class="Field Color Outer">
+                <div class="Label">
+                    Inner Color:
+                </div>
+                <div class="Input">
+                    <input type="color" .value=${inNode.Display.ColorInner} @change=${Send("DisplayColorInner", inNode.Display)} />
+                    <input type="text"  .value=${inNode.Display.ColorInner} @change=${Send("DisplayColorInner", inNode.Display)} />
+                </div>
             </div>
-            <div class="Input">
-                <input type="color" .value=${inNode.Display.ColorOuter} @change=${Send("DisplayColorOuter", inNode.Display)} />
-                <input type="text"  .value=${inNode.Display.ColorOuter} @change=${Send("DisplayColorOuter", inNode.Display)} />
+            <hr/>
+            <div class="Field Content Mode">
+                <div class="Label">
+                    Mode:
+                </div>
+                <div class="Input">
+                    <select .value=${inNode.Content.Mode} @change=${Send("ContentMode", inNode.Content)}>
+                        <option>Copy</option>
+                        <option>CTA</option>
+                        <option>Image</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="Field Color Outer">
-            <div class="Label">
-                Inner Color:
+            <div class="Field Content Message">
+                <div class="Label">
+                    Message:
+                </div>
+                <div class="Input">
+                    <input type="text" .value=${inNode.Content.Message} @change=${Send("ContentMessage", inNode.Content)}/>
+                </div>
             </div>
-            <div class="Input">
-                <input type="color" .value=${inNode.Display.ColorInner} @change=${Send("DisplayColorInner", inNode.Display)} />
-                <input type="text"  .value=${inNode.Display.ColorInner} @change=${Send("DisplayColorInner", inNode.Display)} />
+            <div class="Field Content URLAction">
+                <div class="Label">
+                    Action URL:
+                </div>
+                <div class="Input">
+                    <input type="text" .value=${inNode.Content.URLAction} @change=${Send("ContentURLAction", inNode.Content)}/>
+                </div>
+            </div>
+            <div class="Field Content URLImage">
+                <div class="Label">
+                    Image URL:
+                </div>
+                <div class="Input">
+                    <input type="text" .value=${inNode.Content.URLImage} @change=${Send("ContentURLImage", inNode.Content)}/>
+                </div>
             </div>
         </div>
         `;

@@ -21,6 +21,7 @@ export const BranchGrowth = (inParent) =>
             BranchGrowth(newBranch);
             break;
         case 2:
+            console.log("creating column", newBranch);
             // add column properties
             newBranch.Display = {
                 Width:100,
@@ -40,11 +41,18 @@ export const BranchGrowth = (inParent) =>
                 Mode:"Copy", /* Copy | CTA | Image */
                 URLAction:false,
                 URLImage:false,
-                HTML:false
+                Message:false
             }
             break;
     }
     return newBranch;
+};
+
+export const RedistributeColumns = (inNode) =>
+{
+    var size;
+    size = 100/inRow.Members.length;
+    inRow.Members.forEach( m => m.Display.Width = size );
 };
 
 export const Tree = {

@@ -29,7 +29,6 @@ export default {
             inModel.Selection.push(branch);
             branch = branch.Parent;
         }
-        inModel.Selection.reverse();
     },
     DragStart:(inBranch, inModel, inEvent)=>
     {
@@ -75,5 +74,21 @@ export default {
     DisplayColorInner:(inSettings, inModel, inEvent)=>
     {
         inSettings.ColorInner = inEvent.target.value;
+    },
+    ContentMode:(inContent, inModel, inEvent)=>
+    {
+        inContent.Mode = inEvent.target.value;
+    },
+    ContentMessage:(inContent, inModel, inEvent)=>
+    {
+        inContent.Message = inEvent.target.value;
+    },
+    ContentURLImage:(inContent, inModel, inEvent)=>
+    {
+        inContent.URLImage = inEvent.target.value;
+    },
+    ContentURLAction:(inContent, inModel, inEvent)=>
+    {
+        inContent.URLAction = inEvent.target.value;
     }
 };
