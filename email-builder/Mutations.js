@@ -1,5 +1,5 @@
 
-import {Tree, BranchGrowth} from './Utilities.js';
+import {Tree} from './Utilities.js';
 
 export const RedistributeColumns = (inNode) =>
 {
@@ -17,7 +17,7 @@ export const RedistributeColumns = (inNode) =>
 export default {
     Create:(inBranch) =>
     {
-        BranchGrowth(inBranch);
+        Tree.Grow(inBranch);
         RedistributeColumns(inBranch);
     },
     Clone:(inBranch) =>

@@ -1,9 +1,9 @@
-import {Tree, BranchGrowth} from './Utilities.js';
+import {Tree} from './Utilities.js';
 
 export default {
     Color:"#000000",
     DragFrom:false,
     DragTo:false,
     Selection:[],
-    Table:BranchGrowth()
+    Table:Tree.Grow()
 };

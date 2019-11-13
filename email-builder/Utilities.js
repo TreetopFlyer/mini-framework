@@ -1,53 +1,3 @@
-export const BranchGrowth = (inParent) =>
-{
-    var newBranch;
-    newBranch = Tree.Grow(inParent);
-    switch(newBranch.Depth)
-    {
-        case 0:
-            // add table properties
-            newBranch.Display = {
-                Width:600
-            };
-            BranchGrowth(newBranch);
-            break;
-        case 1:
-            // add row properties
-            newBranch.Display = {
-                Width:100,
-                ColorOuter:false,
-                ColorInner:false
-            };
-            BranchGrowth(newBranch);
-            break;
-        case 2:
-            console.log("creating column", newBranch);
-            // add column properties
-            newBranch.Display = {
-                Width:100,
-                ColorOuter:false,
-                ColorInner:false
-            };
-            BranchGrowth(newBranch);
-            break;
-        case 3:
-            // add cell properties
-            newBranch.Display = {
-                ColorOuter:false,
-                ColorInner:false,
-                Padding:0,
-            },
-            newBranch.Content = {
-                Mode:"Copy", /* Copy | CTA | Image */
-                URLAction:false,
-                URLImage:false,
-                Message:false
-            }
-            break;
-    }
-    return newBranch;
-};
-
 export const Tree = {
     Grow:(inParent)=>
     {
@@ -66,6 +16,56 @@ export const Tree = {
         {
             Tree.Connect(inParent, obj);
         }
+
+        /*********************************** */
+        switch(obj.Depth)
+        {
+            case 0:
+                // add table properties
+                obj.Type = "Table";
+                obj.Display = {
+                    Width:600
+                };
+                Tree.Grow(obj);
+                break;
+            case 1:
+                // add row properties
+                obj.Type = "Row"
+                obj.Display = {
+                    Width:100,
+                    ColorOuter:false,
+                    ColorInner:false
+                };
+                Tree.Grow(obj);
+                break;
+            case 2:
+                // add column properties
+                obj.Type = "Column";
+                obj.Display = {
+                    Width:100,
+                    ColorOuter:false,
+                    ColorInner:false
+                };
+                Tree.Grow(obj);
+                break;
+            case 3:
+                // add cell properties
+                obj.Type = "Cell"
+                obj.Display = {
+                    ColorOuter:false,
+                    ColorInner:false,
+                    Padding:0,
+                },
+                obj.Content = {
+                    Mode:"Copy", /* Copy | CTA | Image */
+                    URLAction:false,
+                    URLImage:false,
+                    Message:false
+                }
+                break;
+        }
+        /********************************************************** */
+
         return obj;
     },
     GetIndex:(inBranch)=>

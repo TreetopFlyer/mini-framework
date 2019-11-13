@@ -17,40 +17,37 @@ export default {
         </div>`;
     },
 
-    Table:(inTable, Send, Draw) => Draw("Draggable", {Node:inTable, Contents:html`
-        ${Draw("Row", null, inTable.Members)}
-        <div class="Editors"><span>Table:</span>${Draw("EditorMembers", inTable)}</div>
-    `}),
+    Table:(inNode, Send, Draw) => html`
+        <div class="Table" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
+            ${Draw("Row", null, inNode.Members)}
+            ${Draw("Editor", inNode)}
+        </div>
+    `,
 
-    Row:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        <div style="background:${inNode.Display.ColorOuter};">
+    Row:(inNode, Send, Draw) => html`
+        <div class="Row" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)} style="background:${inNode.Display.ColorOuter};">
             <div class="Center" style="background:${inNode.Display.ColorInner}; width:${inNode.Parent.Display.Width * (inNode.Display.Width/100)}px;">
                 ${Draw("Column", null, inNode.Members)}
             </div>
-            <div class="Editors"><span>Row:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
+            ${Draw("Editor", inNode)}
         </div>
-    `}),
+    `,
 
-    Column:(inNode, Send, Draw) =>
-    {
-        return html`
-        <div style="width:${inNode.Display.Width}%; display:inline-block; box-sizing: border-box;">
-            ${Draw("Draggable", {Node:inNode, Contents:html`
-                ${Draw("Cell", null, inNode.Members)}
-                <div class="Editors">
-                    <span>Column:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}
-                </div>
-            `})}
+    Column:(inNode, Send, Draw) => html`
+        <div class="Column" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)} style="width:${inNode.Display.Width}%; display:inline-block; box-sizing: border-box;">
+            ${Draw("Cell", null, inNode.Members)}
+            ${Draw("Editor", inNode)}
         </div>
-        `;
-    },
+    `,
 
-    Cell:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        ${Draw("Contents", inNode)}
-        <div class="Editors"><span>Cell:</span>${Draw("EditorNode", inNode)}</div>
-    `}),
+    Cell:(inNode, Send, Draw) => html`
+        <div class="Cell" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
+            ${Draw("Contents", inNode)}
+            ${Draw("Editor", inNode)}
+        </div>
+    `,
 
-    Contents:(inNode, Send, Draw)=>
+    Contents:(inNode, Send, Draw) =>
     {
         switch(inNode.Content.Mode)
         {
@@ -63,46 +60,26 @@ export default {
         }
     },
 
-    Draggable:({Node, Contents}, Send, Draw) =>
+    Editor:(inNode, Send, Draw) =>
     {
         return html`
-        <div
-        ?data-mode-edit=${Node.ModeEdit}
-        ?data-mode-selected=${Node.ModeSelected}
-        class=${MapDepth[Node.Depth]}
-        draggable="true"
-        
-        @dragstart=${Send("DragStart", Node)}
-        @dragend=${Send("DragStop", Node)}
-        @drop=${Send("DragDrop", Node)}}
-        @dragover=${e=>e.preventDefault()}
-        
-        @click=${Send("Select", Node)}>
-            ${Contents}
-        </div>`;
-    },
-
-    EditorNode:(inNode, Send, Draw) =>
-    {
-        if(inNode.ModeEdit != 12515325)
-        {
-            return html`
-            <span class="Editor Individual">
-                <button @click=${Send("Delete", inNode)} title="Delete">☒</button>
-                <button @click=${Send("Clone", inNode)} title="Duplicate">⧉</button>
-            </span>`;
-        }
-    },
-
-    EditorMembers:(inNode, Send, Draw) =>
-    {
-        if(inNode.ModeEdit != 258723985)
-        {
-            return html`
-            <span class="Editor Members">
-                <button @click=${Send("Create", inNode)} title="Grow">⊞</button>
-            </span>`;
-        }
+        <div class="Editors">
+            <span>${inNode.Type}:</span>
+            <button title="Select" @click=${Send("Select", inNode)}>!</button>
+            ${
+                inNode.Depth != 0
+                ? html` <button title="Delete" @click=${Send("Delete", inNode)}>☒</button>
+                        <button title="Duplicate" @click=${Send("Clone", inNode)}>⧉</button>
+                        <button title="Drag and Drop" draggable="true" @dragstart=${Send("DragStart", inNode)} @dragend=${Send("DragStop", inNode)}>⎘</button>`
+                : html``
+            }
+            ${
+                inNode.Depth != 3
+                ? html`<button @click=${Send("Create", inNode)} title="Add Child">⊞</button>`
+                : html``
+            }
+        </div>
+        `;
     },
 
     FieldColor:(inColor, Send, Draw) =>
@@ -112,7 +89,7 @@ export default {
         `;
     },
 
-    ParametersTable:(inNode, Send, Draw)=>
+    ParametersTable:(inNode, Send, Draw) =>
     {
         return html`
         <div class="Form">
