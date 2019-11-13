@@ -11,7 +11,6 @@ export const RedistributeColumns = (inNode) =>
     }
     size = 100/inNode.Members.length;
     inNode.Members.forEach( m => m.Display.Width = size );
-    console.log("resized:", inNode.Members.map(m=>m.Display.Width));
 };
 
 export default {
@@ -31,20 +30,14 @@ export default {
         Tree.Disconnect(inBranch);
         RedistributeColumns(parent);
     },
-    Select:(inBranch, inModel, inEvent)=>
+    ModeSelect:(inBranch, inModel, inEvent)=>
     {
-        var branch;
-
-        inEvent.stopPropagation();
-        inModel.Selection.forEach(s => s.ModeSelected = false);
-        inModel.Selection = [];
-        branch = inBranch;
-        while(branch)
-        {
-            branch.ModeSelected = true;
-            inModel.Selection.push(branch);
-            branch = branch.Parent;
-        }
+        inBranch.Mode.Selected = !inBranch.Mode.Selected;
+    },
+    ModeEdit:(inBranch, inModel, inEvent) =>
+    {
+        inModel.Table
+        Tree.ItrDecendents(inBranch, b => b.Mode.Edit = !b.Mode.Edit);
     },
     DragStart:(inBranch, inModel, inEvent)=>
     {

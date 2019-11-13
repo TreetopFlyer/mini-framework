@@ -6,11 +6,11 @@ export const Tree = {
             ID:Math.random()+"-"+Math.random(),
             Depth:0,
             Parent:false,
-            ModeSelected:false,
             Members:[],
             Type:"",
             Display:{},
-            Content:{}
+            Content:{},
+            Mode:{Selected:false, Edit:false}
         };
         if(inParent)
         {
@@ -143,5 +143,18 @@ export const Tree = {
         inBranch.Parent.Members.splice(index+1, 0, clone);//put the clone back next to the original node
 
         return clone;
-    }
+    },
+    ItrDecendents:(inBranch, inFunction)=>
+    {
+        inFunction(inBranch);
+        inBranch.Members.forEach( m => Tree.ItrDecendents(m, inFunction) );
+    },
+    ItrAncestors:(inBranch, inFunction)=>
+    {
+        inFunction(inBranch);
+        if(inBranch.Parent)
+        {
+            Tree.ItrAncestors(inBranch.Parent, inFunction);
+        }
+    },
 };

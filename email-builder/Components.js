@@ -1,6 +1,5 @@
 import {html} from 'lit-html';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
-const MapDepth = ["Table", "Row", "Column", "Cell"];
 
 export default {
 
@@ -9,7 +8,7 @@ export default {
         return html`
         <div class="App">
             <div>
-                ${Draw("ParametersTable", null, inModel.Selection)}
+                <button @click=${Send("ModeEdit", inModel.Table)}>Edit Mode</button>
             </div>
             <div class="Layout">
                 ${Draw("Table", inModel.Table)}
@@ -19,31 +18,31 @@ export default {
 
     Table:(inNode, Send, Draw) => html`
         <div class="Table" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
-            ${Draw("Row", null, inNode.Members)}
             ${Draw("Editor", inNode)}
+            ${Draw("Row", null, inNode.Members)}
         </div>
     `,
 
     Row:(inNode, Send, Draw) => html`
         <div class="Row" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)} style="background:${inNode.Display.ColorOuter};">
+            ${Draw("Editor", inNode)}
             <div class="Center" style="background:${inNode.Display.ColorInner}; width:${inNode.Parent.Display.Width * (inNode.Display.Width/100)}px;">
                 ${Draw("Column", null, inNode.Members)}
             </div>
-            ${Draw("Editor", inNode)}
         </div>
     `,
 
     Column:(inNode, Send, Draw) => html`
         <div class="Column" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)} style="width:${inNode.Display.Width}%; display:inline-block; box-sizing: border-box;">
-            ${Draw("Cell", null, inNode.Members)}
             ${Draw("Editor", inNode)}
+            ${Draw("Cell", null, inNode.Members)}
         </div>
     `,
 
     Cell:(inNode, Send, Draw) => html`
         <div class="Cell" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
-            ${Draw("Contents", inNode)}
             ${Draw("Editor", inNode)}
+            ${Draw("Contents", inNode)}
         </div>
     `,
 
@@ -62,35 +61,41 @@ export default {
 
     Editor:(inNode, Send, Draw) =>
     {
+        if(!inNode.Mode.Edit)
+        {
+            return "";
+        }
+
         return html`
         <div class="Editors">
-            <span>${inNode.Type}:</span>
-            <button title="Select" @click=${Send("Select", inNode)}>!</button>
-            ${
-                inNode.Depth != 0
-                ? html` <button title="Delete" @click=${Send("Delete", inNode)}>☒</button>
-                        <button title="Duplicate" @click=${Send("Clone", inNode)}>⧉</button>
-                        <button title="Drag and Drop" draggable="true" @dragstart=${Send("DragStart", inNode)} @dragend=${Send("DragStop", inNode)}>⎘</button>`
-                : html``
-            }
-            ${
-                inNode.Depth != 3
-                ? html`<button @click=${Send("Create", inNode)} title="Add Child">⊞</button>`
-                : html``
-            }
+            <div class="Tray">
+                <span>${inNode.Type}:</span>
+                <button title="Select" @click=${Send("ModeSelect", inNode)}>!</button>
+                ${
+                    inNode.Depth != 0
+                    ? html` <button title="Delete" @click=${Send("Delete", inNode)}>☒</button>
+                            <button title="Duplicate" @click=${Send("Clone", inNode)}>⧉</button>
+                            <button title="Drag and Drop" draggable="true" @dragstart=${Send("DragStart", inNode)} @dragend=${Send("DragStop", inNode)}>⎘</button>`
+                    : ""
+                }
+                ${
+                    inNode.Depth != 3
+                    ? html`<button @click=${Send("Create", inNode)} title="Add Child">⊞</button>`
+                    : ""
+                }
+            </div>
+            ${Draw("ParametersTable", inNode)}
         </div>
-        `;
-    },
-
-    FieldColor:(inColor, Send, Draw) =>
-    {
-        return html`
-
         `;
     },
 
     ParametersTable:(inNode, Send, Draw) =>
     {
+        if(!inNode.Mode.Selected)
+        {
+            return "";
+        }
+
         return html`
         <div class="Form">
             <div class="Field Width">
