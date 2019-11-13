@@ -1,6 +1,7 @@
 import {html} from 'lit-html';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html.js';
 const MapDepth = ["Table", "Row", "Column", "Cell"];
+
 export default {
 
     Main:(inModel, Send, Draw) =>
@@ -30,10 +31,19 @@ export default {
         </div>
     `}),
 
-    Column:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
-        ${Draw("Cell", null, inNode.Members)}
-        <div class="Editors"><span>Column:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}</div>
-    `}),
+    Column:(inNode, Send, Draw) =>
+    {
+        return html`
+        <div style="width:${inNode.Display.Width}%; display:inline-block; box-sizing: border-box;">
+            ${Draw("Draggable", {Node:inNode, Contents:html`
+                ${Draw("Cell", null, inNode.Members)}
+                <div class="Editors">
+                    <span>Column:</span>${Draw("EditorNode", inNode)}${Draw("EditorMembers", inNode)}
+                </div>
+            `})}
+        </div>
+        `;
+    },
 
     Cell:(inNode, Send, Draw) => Draw("Draggable", {Node:inNode, Contents:html`
         ${Draw("Contents", inNode)}

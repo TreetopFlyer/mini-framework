@@ -48,13 +48,6 @@ export const BranchGrowth = (inParent) =>
     return newBranch;
 };
 
-export const RedistributeColumns = (inNode) =>
-{
-    var size;
-    size = 100/inRow.Members.length;
-    inRow.Members.forEach( m => m.Display.Width = size );
-};
-
 export const Tree = {
     Grow:(inParent)=>
     {

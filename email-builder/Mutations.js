@@ -1,19 +1,35 @@
 
 import {Tree, BranchGrowth} from './Utilities.js';
 
+export const RedistributeColumns = (inNode) =>
+{
+    var size;
+
+    if(inNode.Depth != 1)
+    {
+        return;
+    }
+    size = 100/inNode.Members.length;
+    inNode.Members.forEach( m => m.Display.Width = size );
+    console.log("resized:", inNode.Members.map(m=>m.Display.Width));
+};
+
 export default {
     Create:(inBranch) =>
     {
         BranchGrowth(inBranch);
+        RedistributeColumns(inBranch);
     },
     Clone:(inBranch) =>
     {
         Tree.Clone(inBranch);
+        RedistributeColumns(inBranch.Parent);
     },
     Delete:(inBranch, inModel) =>
     {
-        
+        var parent = inBranch.Parent;
         Tree.Disconnect(inBranch);
+        RedistributeColumns(parent);
     },
     Select:(inBranch, inModel, inEvent)=>
     {
@@ -55,11 +71,15 @@ export default {
             Tree.Disconnect(inModel.DragFrom);
             index = Tree.GetIndex(inModel.DragTo);
             Tree.Connect(inModel.DragTo.Parent, inModel.DragFrom, index);
+            RedistributeColumns(inModel.DragTo.Parent);
         }
         if(inModel.DragFrom.Depth-1 == inModel.DragTo.Depth)// drag to first parent
         {
+            var parent = inModel.DragFrom.Parent
             Tree.Disconnect(inModel.DragFrom);
             Tree.Connect(inModel.DragTo, inModel.DragFrom);
+            RedistributeColumns(inModel.DragTo);
+            RedistributeColumns(parent);
         }
         inModel.DragTo = false;
     },
