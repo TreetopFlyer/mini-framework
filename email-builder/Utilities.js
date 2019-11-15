@@ -15,6 +15,7 @@ export const Tree = {
         if(inParent)
         {
             Tree.Connect(inParent, obj);
+            obj.Mode.Edit = inParent.Mode.Edit;
         }
 
         /*********************************** */
