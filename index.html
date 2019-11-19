@@ -46,6 +46,7 @@
     top:0px;
     margin-bottom:5px;
 
+    text-align:center;
     font-size:10px;
     font-weight:bolder;
     font-family:Arial, Helvetica, sans-serif;
@@ -55,7 +56,16 @@
     display:inline-block;
     padding: 3px 3px 3px 8px;
     background: #aaa;
-    border-radius: 50px;
+    border-radius: 13px;
+}
+.Editors.Active
+{
+    z-index:1000;
+}
+.Editors.Active .Tray
+{
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 .Editors .Tray span
 {
@@ -75,7 +85,7 @@
     text-align: center;
     line-height: 0;
 }
-.Editors .Tray button:hover
+.Editors .Tray button:hover, .Editors .Tray button.Active
 {
     background:#ff0;
     color:#666;
@@ -85,9 +95,10 @@
 {
     display:block;
     width:400px;
+    margin:0 auto;
     padding: 3px 3px 3px 8px;
     background: #aaa;
-    border-radius: 10px;
+    border-radius: 13px;
 }
 .Form .Field
 {

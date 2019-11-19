@@ -63,14 +63,14 @@ export default {
         {
             Tree.Disconnect(inModel.DragFrom);
             index = Tree.GetIndex(inModel.DragTo);
-            Tree.Connect(inModel.DragTo.Parent, inModel.DragFrom, index);
+            Tree.Connect(inModel.DragTo.Parent, inModel.DragFrom, index+1);
             RedistributeColumns(inModel.DragTo.Parent);
         }
         if(inModel.DragFrom.Depth-1 == inModel.DragTo.Depth)// drag to first parent
         {
             var parent = inModel.DragFrom.Parent
             Tree.Disconnect(inModel.DragFrom);
-            Tree.Connect(inModel.DragTo, inModel.DragFrom);
+            Tree.Connect(inModel.DragTo, inModel.DragFrom, 0);
             RedistributeColumns(inModel.DragTo);
             RedistributeColumns(parent);
         }
@@ -79,6 +79,10 @@ export default {
     DisplayWidth:(inSettings, inModel, inEvent)=>
     {
         inSettings.Width = inEvent.target.valueAsNumber;
+    },
+    DisplayPadding:(inSettings, inModel, inEvent)=>
+    {
+        inSettings.Padding = inEvent.target.valueAsNumber;
     },
     DisplayColorOuter:(inSettings, inModel, inEvent)=>
     {

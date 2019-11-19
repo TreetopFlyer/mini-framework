@@ -66,11 +66,14 @@ export default {
             return "";
         }
 
+        var cssClass;
+        cssClass = inNode.Mode.Selected ? "Active" : "";
+
         return html`
-        <div class="Editors">
+        <div class=${"Editors "+cssClass}>
             <div class="Tray">
                 <span>${inNode.Type}:</span>
-                <button title="Select" @click=${Send("ModeSelect", inNode)}>!</button>
+                <button title="Select" @click=${Send("ModeSelect", inNode)} class=${cssClass}>⚙</button>
                 ${
                     inNode.Depth != 0
                     ? html` <button title="Delete" @click=${Send("Delete", inNode)}>☒</button>
@@ -104,6 +107,14 @@ export default {
                 </div>
                 <div class="Input">
                     <input type="number" .value=${inNode.Display.Width} @change=${Send("DisplayWidth", inNode.Display)}/>
+                </div>
+            </div>
+            <div class="Field Width">
+                <div class="Label">
+                    Padding:
+                </div>
+                <div class="Input">
+                    <input type="number" .value=${inNode.Display.Padding} @change=${Send("DisplayPadding", inNode.Display)}/>
                 </div>
             </div>
             <div class="Field Color Outer">

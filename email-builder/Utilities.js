@@ -25,7 +25,8 @@ export const Tree = {
                 // add table properties
                 obj.Type = "Table";
                 obj.Display = {
-                    Width:600
+                    Width:600,
+                    Padding:0
                 };
                 Tree.Grow(obj);
                 break;
@@ -34,6 +35,7 @@ export const Tree = {
                 obj.Type = "Row"
                 obj.Display = {
                     Width:100,
+                    Padding:0,
                     ColorOuter:false,
                     ColorInner:false
                 };
@@ -44,6 +46,7 @@ export const Tree = {
                 obj.Type = "Column";
                 obj.Display = {
                     Width:100,
+                    Padding:0,
                     ColorOuter:false,
                     ColorInner:false
                 };
@@ -53,9 +56,9 @@ export const Tree = {
                 // add cell properties
                 obj.Type = "Cell"
                 obj.Display = {
+                    Padding:0,
                     ColorOuter:false,
                     ColorInner:false,
-                    Padding:0,
                 },
                 obj.Content = {
                     Mode:"Copy", /* Copy | CTA | Image */
