@@ -17,47 +17,84 @@ export default {
     },
 
     Table:(inNode, Send, Draw) => html`
-        <div class="Table" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
+        <table class="Rows" border="0" cellpadding="0" cellspacing="0" width="100%" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
             ${Draw("Editor", inNode)}
             ${Draw("Row", null, inNode.Members)}
-        </div>
+        </table>
     `,
 
     Row:(inNode, Send, Draw) => html`
-        <div class="Row" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)} style="background:${inNode.Display.ColorOuter};">
-            ${Draw("Editor", inNode)}
-            <div class="Center" style="background:${inNode.Display.ColorInner}; width:${inNode.Parent.Display.Width * (inNode.Display.Width/100)}px;">
-                ${Draw("Column", null, inNode.Members)}
-            </div>
-        </div>
+        <tr>
+            <td class="Row" align="center" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)} style="background-color:${inNode.Display.ColorOuter};">
+                ${Draw("Editor", inNode)}
+                <table class="Columns" border="0" cellpadding="0" cellspacing="0" width="${(inNode.Display.Width/100) * inNode.Parent.Display.Width}" style="background-color:${inNode.Display.ColorInner};">
+                    <tr>
+                        ${Draw("Column", null, inNode.Members)}
+                    </tr>
+                </table>
+            </td>
+        </tr>
     `,
 
     Column:(inNode, Send, Draw) => html`
-        <div class="Column" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)} style="width:${inNode.Display.Width}%; display:inline-block; box-sizing: border-box;">
+        <th class="Column" align="center" valign="top" width="${inNode.Display.Width}%" style="background-color:${inNode.Display.ColorOuter};" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
             ${Draw("Editor", inNode)}
-            ${Draw("Cell", null, inNode.Members)}
-        </div>
+            <table class="Content" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:${inNode.Display.ColorInner};">
+                ${Draw("Cell", null, inNode.Members)}
+            </table>
+        </th>
     `,
 
-    Cell:(inNode, Send, Draw) => html`
-        <div class="Cell" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
-            ${Draw("Editor", inNode)}
-            ${Draw("Contents", inNode)}
-        </div>
-    `,
-
-    Contents:(inNode, Send, Draw) =>
+    Cell:(inNode, Send, Draw) =>
     {
+        var contents;
+        var width;
+        var column, row, table;
         switch(inNode.Content.Mode)
         {
             case "CTA" :
-                return html`<a href=${inNode.Content.URLAction}>${unsafeHTML(inNode.Content.Message)}</a>`;
+                contents = html`
+                <td>
+                    ${Draw("Editor", inNode)}
+                    <table border="0" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="CTA" align="center" width="200">
+                                <a target="_blank" href=${inNode.Content.URLAction}>${unsafeHTML(inNode.Content.Message)}</a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>`;
+                break;
             case "Image" :
-                return html`<a href=${inNode.Content.URLAction}><img src=${inNode.Content.URLImage} alt=${inNode.Content.Message}/></a>`;
+                column = inNode.Parent;
+                row = column.Parent;
+                table = row.Parent;
+                width = table.Display.Width * row.Display.Width / 100 * column.Display.Width / 100;
+                contents = html`
+                <td>
+                    ${Draw("Editor", inNode)}
+                    <a href=${inNode.Content.URLAction}><img />
+                        <img class="Fill" src=${inNode.Content.URLImage} alt=${inNode.Content.Message} width="${width}" style="width:${width}px; max-width:${width}px;" />
+                    </a>
+                </td>`;
+                break;
             case "Copy" :
-                return html`<div>${unsafeHTML(inNode.Content.Message)}</div>`;
+                contents = html`
+                <td>
+                    ${Draw("Editor", inNode)}
+                    ${unsafeHTML(inNode.Content.Message)}
+                </td>`;
+                break;
+            default :
+                contents = "nothing";
         }
+
+        return html`
+        <tr class="Cell" @dragover=${e=>e.preventDefault()} @drop=${Send("DragDrop", inNode)}>
+            ${contents}
+        </tr>`;
     },
+
 
     Editor:(inNode, Send, Draw) =>
     {

@@ -54,9 +54,9 @@ Tree.HandleCreate = (inNode) =>
             },
             inNode.Content = {
                 Mode:"Copy", /* Copy | CTA | Image */
-                URLAction:false,
-                URLImage:false,
-                Message:false
+                URLAction:"https://isitchristmas.com/",
+                URLImage:"https://placekitten.com/800/300",
+                Message:"Act <strong>now</strong>!"
             }
             break;
     }

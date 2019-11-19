@@ -1,44 +1,4 @@
 <style>
-.Table, .Row, .Column, .Cell
-{
-    box-sizing: border-box;
-    outline:1px solid #000;
-    padding:5px;
-    position:relative;
-}
-.Table
-{
-    background:#eee;
-    min-height:100px;
-}
-
-*[draggable]
-{
-    
-}
-*[data-mode-selected]
-{
-    outline:2px dotted #ff0;
-    box-shadow:0px 0px 5px #000;
-}
-
-.Row .Center
-{
-    margin:0 auto;
-}
-.Row .Center::after
-{
-    content:"";
-    display: block;
-    clear:left;
-}
-.Column
-{
-    display:block;
-    float:left;
-    box-sizing: border-box;
-}
-
 .Editors
 {
     display:block;
@@ -116,5 +76,121 @@
     float:right;
 }
 </style>
+<style type="text/css">
+    /************************/
+    body
+    {
+      margin:0 !important;
+      padding:0 !important;
+      -webkit-text-size-adjust:100%;
+      -ms-text-size-adjust:100%;
+      font-size:100%;
+    }
+    img
+    {
+      border:0 none;
+      height:auto;
+      line-height:100%;
+      outline:none;
+      text-decoration:none;
+      -ms-interpolation-mode:bicubic;
+    }
+    img.Fill
+    {
+      display:block;
+      width:100%;
+      height:auto;
+    }
+    table
+    {
+      mso-table-lspace:0pt;
+      mso-table-rspace:0pt;
+    }
+    table, td, th
+    {
+      font-weight:normal;
+      border-collapse:collapse;
+    }
+    table.Rows
+    {
+      margin:0;
+      padding:0;
+      width:100% !important;
+    }
+    .Font-Sans
+    {
+      font-family: "Proxima Nova", Helvetica, arial, sans-serif;
+    }
+    .Font-Slab
+    {
+      font-family:'Sanchez', Georgia, serif;
+    }
+    .Light
+    {
+      color:#fff;
+    }
+    .Dark
+    {
+      color:#000;
+    }
+    .CTA
+    {
+      background-color:#ff3300;
+      color:#ffffff
+    }
+    /*
+    .Cell.Body img
+    {
+      width:100% !important;
+    }
+    .Cell.Body img.Share
+    {
+      width:auto !important;
+    }
+    */
+    /************************/
+    @media(max-width: 480px)
+    {
+      .Columns, .Column
+      {
+        display:block !important;
+        width:100% !important;/* 100% vs 480px */
+      }
+      img.Fill
+      {
+        width:100% !important;
+      }
+      body
+      {
+        font-size:100%;
+        line-height:1.4em;
+      }
+    }
+    /************************/
+    @font-face
+    {
+      font-family:'Sanchez';
+      font-style:normal;
+      font-weight:400;
+      src:local('Sanchez'), local('Sanchez'), url('http://cdn2.hubspot.net/hubfs/331596/fonts/sanchez-light-webfont.woff') format('woff');
+      mso-font-alt: 'Arial';
+    }
+    @font-face
+    {
+      font-family:'Proxima Nova';
+      font-style:normal;
+      font-weight:normal;
+      src:local('Proxima Nova'), local('Proxima Nova'), url('https://cdn2.hubspot.net/hubfs/331596/fonts/ProximaNova-Reg-webfont.woff') format('woff');
+      mso-font-alt: 'Arial';
+    }
+    @font-face
+    {
+      font-family:'Proxima Nova';
+      font-style:normal;
+      font-weight:bold;
+      src:local('Proxima Nova'), local('Proxima Nova'), url('http://cdn2.hubspot.net/hubfs/331596/fonts/ProximaNova-Bold-webfont.woff') format('woff');
+      mso-font-alt: 'Arial';
+    }
+  </style>
 <div id="App"></div>
 <script src="email-builder/index.js"></script>
