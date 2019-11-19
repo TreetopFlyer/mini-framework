@@ -1,4 +1,5 @@
 export const Tree = {
+    HandleCreate:()=>{},
     Grow:(inParent)=>
     {
         var obj;
@@ -7,69 +8,12 @@ export const Tree = {
             Depth:0,
             Parent:false,
             Members:[],
-            Type:"",
-            Display:{},
-            Content:{},
-            Mode:{Selected:false, Edit:false}
         };
         if(inParent)
         {
             Tree.Connect(inParent, obj);
-            obj.Mode.Edit = inParent.Mode.Edit;
         }
-
-        /*********************************** */
-        switch(obj.Depth)
-        {
-            case 0:
-                // add table properties
-                obj.Type = "Table";
-                obj.Display = {
-                    Width:600,
-                    Padding:0
-                };
-                Tree.Grow(obj);
-                break;
-            case 1:
-                // add row properties
-                obj.Type = "Row"
-                obj.Display = {
-                    Width:100,
-                    Padding:0,
-                    ColorOuter:false,
-                    ColorInner:false
-                };
-                Tree.Grow(obj);
-                break;
-            case 2:
-                // add column properties
-                obj.Type = "Column";
-                obj.Display = {
-                    Width:100,
-                    Padding:0,
-                    ColorOuter:false,
-                    ColorInner:false
-                };
-                Tree.Grow(obj);
-                break;
-            case 3:
-                // add cell properties
-                obj.Type = "Cell"
-                obj.Display = {
-                    Padding:0,
-                    ColorOuter:false,
-                    ColorInner:false,
-                },
-                obj.Content = {
-                    Mode:"Copy", /* Copy | CTA | Image */
-                    URLAction:false,
-                    URLImage:false,
-                    Message:false
-                }
-                break;
-        }
-        /********************************************************** */
-
+        Tree.HandleCreate(obj);
         return obj;
     },
     GetIndex:(inBranch)=>
